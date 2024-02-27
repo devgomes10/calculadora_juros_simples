@@ -8,16 +8,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
-fun CaixaDeEntrada (
+fun CaixaDeEntrada(
     label: String,
     placeholder: String,
     value: String,
     keyboardType: KeyboardType,
     modifier: Modifier,
+    atualizarValor: (String) -> Unit,
 ) {
     OutlinedTextField(
         value = value,
-        onValueChange = {},
+        onValueChange = atualizarValor,
         modifier = modifier,
         label = {
             Text(text = label)
