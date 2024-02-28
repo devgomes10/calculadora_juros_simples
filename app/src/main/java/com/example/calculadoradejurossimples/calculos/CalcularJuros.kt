@@ -1,9 +1,9 @@
 package com.example.calculadoradejurossimples
 
-fun calcularJuros(capital: Double, taxa: Double, tempo: Double): Double {
+fun calculateFees(capital: Double, taxa: Double, tempo: Double): Double {
     return capital * taxa / 100 * tempo
 }
 
-fun calcularMontante(capital: Double, juros: Double): Double {
+fun calculateAmount(capital: Double, juros: Double): Double {
     return capital + juros
 }

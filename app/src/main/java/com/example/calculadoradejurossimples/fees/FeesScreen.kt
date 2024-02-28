@@ -11,6 +11,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,17 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calculadoradejurossimples.CaixaDeEntrada
 import com.example.calculadoradejurossimples.ResultCard
-import com.example.calculadoradejurossimples.calcularJuros
-import com.example.calculadoradejurossimples.calcularMontante
 
 @Composable
-fun JurosScreen() {
+fun FeesScreen(feesScreenViewModel: FeesScreenViewModel) {
 
-    var capital by remember { mutableStateOf("") }
-    var taxa by remember { mutableStateOf("") }
-    var tempo by remember { mutableStateOf("") }
-    var juros by remember { mutableStateOf(0.0) }
-    var montante by remember { mutableStateOf(0.0) }
+    val capital by feesScreenViewModel.capital.observeAsState(initial = "")
+    val rate by feesScreenViewModel.rate.observeAsState(initial = "")
+    val time by feesScreenViewModel.time.observeAsState(initial = "")
+    val fees by feesScreenViewModel.fees.observeAsState(initial = 0.0)
+    val amount by feesScreenViewModel.amount.observeAsState(initial = 0.0)
 
     Box(
         modifier = Modifier.padding(16.dp),
@@ -69,44 +68,37 @@ fun JurosScreen() {
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                         atualizarValor = {
-                            capital = it
+                            feesScreenViewModel.onCapitalChanged(it)
                         }
                     )
                     CaixaDeEntrada(
                         label = "Taxa de juros mensal",
                         placeholder = "Qual a taxa de juros mensal?",
-                        value = taxa,
+                        value = rate,
                         keyboardType = KeyboardType.Decimal,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                         atualizarValor = {
-                            taxa = it
+                            feesScreenViewModel.onRateChanged(it)
                         }
                     )
                     CaixaDeEntrada(
                         label = "Período em meses",
                         placeholder = "Qual o tempo em meses?",
-                        value = tempo,
+                        value = time,
                         keyboardType = KeyboardType.Decimal,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                         atualizarValor = {
-                            tempo = it
+                            feesScreenViewModel.onTimeChanged(it)
                         }
                     )
                     Button(
                         onClick = {
-                            juros = calcularJuros(
-                                capital = capital.toDouble(),
-                                taxa = taxa.toDouble(),
-                                tempo = tempo.toDouble()
-                            )
-                            montante = calcularMontante(
-                                capital = capital.toDouble(),
-                                juros = juros
-                            )
+                            feesScreenViewModel.calculateFeesViewModel()
+                            feesScreenViewModel.calculateAmountViewModel()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -118,7 +110,7 @@ fun JurosScreen() {
             }
             Spacer(modifier = Modifier.height(16.dp))
             // Resultado da aplicação
-            ResultCard(juros = juros, montante = montante)
+            ResultCard(juros = fees, montante = amount)
         }
     }
 }
